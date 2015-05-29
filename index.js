@@ -1,12 +1,19 @@
 module.exports = function(oldNode, newNodes) {
   var parent = oldNode.parentNode
 
-  if('array' !== typeof newNodes)
+  if(! Array.isArray(newNodes))
     newNodes = [newNodes]
 
   newNodes.forEach(function(node) {
-    parent.insertBefore(node, oldNode)
+    // Check if its a document fragment
+    node.nodeType === 11
+      ? [].slice.call(node.childNodes).forEach(insert)
+      : insert(node)
   })
+
+  function insert(node) {
+    parent.insertBefore(node, oldNode)
+  }
 
   parent.removeChild(oldNode)
 }
